@@ -1,3 +1,7 @@
+# A wrapper which memoizes function return values
+# and provides them to subsequent calls.  Useful for
+# dynamic programming problems where recursive solutions are simple.
+# Speeds up Naive recursive solutions
 def memoize(func):
     cache = {}
     def wrap(*args):

@@ -4,6 +4,7 @@
 
 using callback = std::function<void(int)>;
 
+// standard breadth first search algorithm with a callback
 void bfs(directed_graph<int> g, int source, callback cb) {
     std::set<int> visited;
     std::queue<int> q;
