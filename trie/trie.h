@@ -37,7 +37,7 @@ struct trie {
         }
     }
 
-    std::vector<std::string> prefix_matches(std::string s) const {
+    std::vector<std::string> prefix_matches(const std::string& s) const {
         auto cur = root;
         std::vector<std::string> ret;
         std::string build;
@@ -54,17 +54,18 @@ struct trie {
         return ret;
     }
 
-    bool valid_word(const std::string& s) const {
+    // check if any word in the trie is a prefix of s
+    bool any_prefix(const std::string& s) const {
         auto cur = root;
         for (auto i: s) {
             if (cur->word_end)
-                return false;
+                return true;
             if (cur->children.find(i) == cur->children.end())
                 return false;
             cur = cur->children[i];
         }
-        return cur->word_end && cur->children.size() == 0;
-    }    
+        return false;
+    }
 
     ~trie() {
         std::queue<trie_node*> q;
@@ -78,12 +79,3 @@ struct trie {
         }
     }
 };
-
-
-int main() {
-    trie t;
-
-    t.insert("hello");
-    t.insert("world");
-    return 0;
-}

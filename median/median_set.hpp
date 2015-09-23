@@ -28,7 +28,6 @@ class median_set {
         }
     }
 
-    // Remove a single instance of n from the set
     void insert(const T& n) {
         std::size_t small_size = small.size();
         std::size_t large_size = large.size();
@@ -68,6 +67,7 @@ class median_set {
         }
     }
 
+    // Remove a single instance of n from the set
     void erase(const T& n) {
         std::size_t small_size = small.size();
         std::size_t large_size = large.size();
