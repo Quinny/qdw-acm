@@ -111,7 +111,7 @@ int main() {
         ++throws;
         for (auto i: out)
             std::cout << i << " ";
-        std::cout << std::endl;
+        std::cout << std::endl << std::endl;
     }
     return 0;
 }
