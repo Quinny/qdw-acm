@@ -1,0 +1,114 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+
+using point = std::pair<int, int>;
+
+template <typename T>
+using matrix = std::vector<std::vector<T>>;
+
+bool on_board(point p, int w, int h) {
+    return p.first >= 0 && p.second >= 0 && p.first < h && p.second < w;
+}
+
+std::vector<point> neighbours(point p, int w, int h) {
+    std::vector<point> ret;
+    std::vector<point> dir = {
+        {0 , -1},
+        {1, 0},
+        {0, 1},
+        {-1, 0}
+    };
+    for (auto d: dir) {
+        if (on_board({p.first + d.first, p.second + d.second}, w, h))
+            ret.push_back({p.first + d.first, p.second + d.second});
+    }
+    return ret;
+}
+
+void visitXs(point p, matrix<char> board, matrix<bool>& visited) {
+    std::queue<point> q;
+    q.push(p);
+
+    while (!q.empty()) {
+        auto t = q.front();
+        q.pop();
+
+        visited[t.first][t.second] = true;
+        for (auto i: neighbours(t, board[0].size(), board.size())) {
+            if (board[i.first][i.second] == 'X' && !visited[i.first][i.second])
+                q.push(i);
+        }
+    }
+}
+
+int dieInRegion(point p, matrix<char> board, matrix<bool>& visited) {
+    std::vector<point> xs;
+    std::queue<point> q;
+    q.push(p);
+
+    while (!q.empty()) {
+        auto t = q.front();
+        q.pop();
+        visited[t.first][t.second] = true;
+        for (auto i: neighbours(t, board[0].size(), board.size())) {
+            if (board[i.first][i.second] == 'X') {
+                if (std::find(xs.begin(), xs.end(), i) == xs.end())
+                    xs.push_back(i);
+            }
+            if (!visited[i.first][i.second] && board[i.first][i.second] == '*' )
+                q.push(i);
+        }
+    }
+
+    int ret = 0;
+    for (auto i: xs) {
+        if (!visited[i.first][i.second]) {
+            ++ret;
+            visitXs(i, board, visited);
+        }
+    }
+
+    return ret;
+}
+
+int main() {
+    int w, h, throws = 1;
+    while (true) {
+        std::cin >> w >> h;
+        if (w == 0 && h == 0)
+            break;
+        matrix<char> board;
+        matrix<bool> visited;
+        for (int i = 0; i < h; ++i) {
+            std::vector<char> v;
+            std::vector<bool> v2;
+            for (int j = 0; j < w; ++j) {
+                char tmp;
+                std::cin >> tmp;
+                v.push_back(tmp);
+                v2.push_back(false);
+            }
+            board.push_back(v);
+            visited.push_back(v2);
+        }
+
+        std::vector<int> out;
+        for (int i = 0; i < board.size(); ++i) {
+            for (int j = 0; j < board[0].size(); ++j) {
+                if (!visited[i][j] && board[i][j] == '*') {
+                    out.push_back(
+                        dieInRegion({i, j}, board, visited)
+                    );
+                }
+            }
+        }
+        std::sort(out.begin(), out.end());
+        std::cout << "Throw " << throws << std::endl;
+        ++throws;
+        for (auto i: out)
+            std::cout << i << " ";
+        std::cout << std::endl;
+    }
+    return 0;
+}
