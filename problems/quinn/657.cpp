@@ -46,15 +46,16 @@ std::vector<point> floodfill(point p, matrix<char> board,
 
         visited[t.first][t.second] = true;
         for (auto i: neighbours(t, board[0].size(), board.size())) {
-            if (board[i.first][i.second] == record) {
-                if (std::find(ret.begin(), ret.end(), i) == ret.end())
-                    ret.push_back(i);
-            }
+            if (board[i.first][i.second] == record && !visited[i.first][i.second])
+                ret.push_back(i);
 
             if (!visited[i.first][i.second] &&
                     std::find(on.begin(), on.end(),
-                        board[i.first][i.second]) != on.end())
+                        board[i.first][i.second]) != on.end()) {
+
+                visited[i.first][i.second] = true;
                 q.push(i);
+            }
 
         }
     }
@@ -77,10 +78,9 @@ int dieInRegion(point p, matrix<char> board, matrix<bool>& visited) {
 
 int main() {
     int w, h, throws = 1;
-    while (true) {
-        std::cin >> w >> h;
+    while (std::cin >> w >> h) {
         if (w == 0 && h == 0)
-            break;
+            return 0;
         matrix<char> board;
         matrix<bool> visited;
         for (int i = 0; i < h; ++i) {
@@ -96,6 +96,7 @@ int main() {
             visited.push_back(v2);
         }
 
+
         std::vector<int> out;
         for (std::size_t i = 0; i < board.size(); ++i) {
             for (std::size_t j = 0; j < board[0].size(); ++j) {
@@ -109,9 +110,9 @@ int main() {
         std::sort(out.begin(), out.end());
         std::cout << "Throw " << throws << std::endl;
         ++throws;
-        for (auto i: out)
-            std::cout << i << " ";
-        std::cout << std::endl << std::endl;
+        for (std::size_t i = 0; i < out.size() - 1; ++i)
+            std::cout << out[i] << " ";
+        std::cout << out[out.size() - 1] << std::endl << std::endl;
     }
     return 0;
 }
