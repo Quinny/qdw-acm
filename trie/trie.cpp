@@ -54,6 +54,18 @@ struct trie {
         return ret;
     }
 
+    bool valid_word(const std::string& s) const {
+        auto cur = root;
+        for (auto i: s) {
+            if (cur->word_end)
+                return false;
+            if (cur->children.find(i) == cur->children.end())
+                return false;
+            cur = cur->children[i];
+        }
+        return cur->word_end && cur->children.size() == 0;
+    }    
+
     ~trie() {
         std::queue<trie_node*> q;
         q.push(root);
