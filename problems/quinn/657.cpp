@@ -27,49 +27,51 @@ std::vector<point> neighbours(point p, int w, int h) {
     return ret;
 }
 
-void visitXs(point p, matrix<char> board, matrix<bool>& visited) {
-    std::queue<point> q;
-    q.push(p);
-
-    while (!q.empty()) {
-        auto t = q.front();
-        q.pop();
-
-        visited[t.first][t.second] = true;
-        for (auto i: neighbours(t, board[0].size(), board.size())) {
-            if (board[i.first][i.second] == 'X' && !visited[i.first][i.second])
-                q.push(i);
-        }
+void reset(matrix<bool>& m) {
+    for (std::size_t i = 0; i < m.size(); ++i) {
+        for (std::size_t j = 0; j < m[0].size(); ++j)
+            m[i][j] = false;
     }
 }
 
-int dieInRegion(point p, matrix<char> board, matrix<bool>& visited) {
-    std::vector<point> xs;
+std::vector<point> floodfill(point p, matrix<char> board,
+        matrix<bool>& visited, std::vector<char> on, char record) {
     std::queue<point> q;
     q.push(p);
+    std::vector<point> ret;
 
     while (!q.empty()) {
         auto t = q.front();
         q.pop();
+
         visited[t.first][t.second] = true;
         for (auto i: neighbours(t, board[0].size(), board.size())) {
-            if (board[i.first][i.second] == 'X') {
-                if (std::find(xs.begin(), xs.end(), i) == xs.end())
-                    xs.push_back(i);
+            if (board[i.first][i.second] == record) {
+                if (std::find(ret.begin(), ret.end(), i) == ret.end())
+                    ret.push_back(i);
             }
-            if (!visited[i.first][i.second] && board[i.first][i.second] == '*' )
+
+            if (!visited[i.first][i.second] &&
+                    std::find(on.begin(), on.end(),
+                        board[i.first][i.second]) != on.end())
                 q.push(i);
+
         }
     }
 
+    return ret;
+}
+
+int dieInRegion(point p, matrix<char> board, matrix<bool>& visited) {
+    auto xs = floodfill(p, board, visited, {'*', 'X'}, 'X');
+    auto tmp = visited;
+    reset(tmp);
     int ret = 0;
     for (auto i: xs) {
-        if (!visited[i.first][i.second]) {
+        if (!tmp[i.first][i.second])
             ++ret;
-            visitXs(i, board, visited);
-        }
+        floodfill(i, board, tmp, {'X'}, 'q');
     }
-
     return ret;
 }
 
@@ -95,9 +97,9 @@ int main() {
         }
 
         std::vector<int> out;
-        for (int i = 0; i < board.size(); ++i) {
-            for (int j = 0; j < board[0].size(); ++j) {
-                if (!visited[i][j] && board[i][j] == '*') {
+        for (std::size_t i = 0; i < board.size(); ++i) {
+            for (std::size_t j = 0; j < board[0].size(); ++j) {
+                if (!visited[i][j] && board[i][j] != '.') {
                     out.push_back(
                         dieInRegion({i, j}, board, visited)
                     );
