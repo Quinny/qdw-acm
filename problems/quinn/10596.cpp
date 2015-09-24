@@ -1,35 +1,58 @@
 #include <iostream>
 #include "../../graphs/directed_graph.h"
 #include <set>
+#include <queue>
 
-bool possible(directed_graph<int>& g, int cur,
-        std::set<std::pair<int, int>> path, std::size_t edges) {
-    if (cur == 0 && path.size() == edges)
-        return true;
+bool is_connected(directed_graph<int> g, std::size_t nodes) {
+    std::queue<int> q;
+    std::set<int> visited;
 
-    for (auto i: g[cur]) {
-        if (path.find({cur, i}) == path.end()) {
-            auto tmp = path;
-            tmp.insert({cur, i});
-            auto check = possible(g, i, tmp, edges);
-            if (check) return true;
+    auto first = g.g_.begin()->first;
+    q.push(first);
+    visited.insert(first);
+    while (!q.empty()) {
+        auto t = q.front();
+        q.pop();
+
+        for (auto i: g[t]) {
+            if (visited.find(i) == visited.end()) {
+                visited.insert(i);
+                q.push(i);
+            }
         }
     }
+    return visited.size() == nodes;
+}
 
-    return false;
+bool degree_requirements(std::map<int, int> counts) {
+    for (auto i: counts)
+        if (i.second % 2 == 1)
+            return false;
+    return true;
+}
+
+bool has_euler_cycle(std::map<int, int> counts, directed_graph<int> g, int nodes) {
+    return degree_requirements(counts) && is_connected(g, nodes);
 }
 
 int main() {
     std::size_t nodes, edges;
     while (std::cin >> nodes >> edges) {
+        std::map<int, int> counts;
         directed_graph<int> g;
-        for (int i = 0; i < edges; ++i) {
+        for (std::size_t i = 0; i < edges; ++i) {
             int n1, n2;
             std::cin >> n1 >> n2;
+            ++counts[n1]; ++counts[n2];
             g.connect(n1, n2);
+            g.connect(n2, n1);
         }
-        std::set<std::pair<int, int>> p;
-        std::cout << possible(g, 0, p, edges) << std::endl;
+        auto check = has_euler_cycle(counts, g, counts.size());
+        if (check)
+            std::cout << "Possible";
+        else
+            std::cout << "Not Possible";
+        std::cout << std::endl;
     }
     return 0;
 }
