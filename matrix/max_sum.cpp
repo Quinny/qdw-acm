@@ -14,10 +14,10 @@ int kadane(const std::vector<int> v) {
 // maximum sub rectangle for a 2d array
 int two_d_kadane(const std::vector<std::vector<int>>& m) {
     int ret = m[0][0];
-    for (std::size_t left = 0; left < m.size(); ++left) {
+    for (std::size_t left = 0; left < m[0].size(); ++left) {
         std::vector<int> tmp(m.size(), 0);
-        for (std::size_t right = left; right < m.size(); ++right) {
-            for (std::size_t i = 0; i < m[0].size(); ++i)
+        for (std::size_t right = left; right < m[0].size(); ++right) {
+            for (std::size_t i = 0; i < m.size(); ++i)
                 tmp[i] += m[i][right];
             // sum between 2 rows and columns and then use kadanes 1d
             // to find the maximum subsequence within
