@@ -3,6 +3,9 @@
 #include <set>
 #include <queue>
 
+// a graph a euler cycle if it is connected and the degrees
+// of all nodes are even
+
 bool is_connected(directed_graph<int> g, std::size_t nodes) {
     std::queue<int> q;
     std::set<int> visited;
