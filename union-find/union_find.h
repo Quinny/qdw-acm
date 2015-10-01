@@ -4,11 +4,13 @@ template <typename T>
 struct union_find {
     std::map<T, T> parents;
     std::map<T, std::size_t> sizes;
+    std::size_t components = 0;
 
     void init_vertex(const T& u) {
         if (parents.find(u) == parents.end()) {
             parents[u] = u;
             sizes[u] = 1;
+            ++components;
         }
     }
 
@@ -21,6 +23,8 @@ struct union_find {
     void connect(const T& a, const T& b) {
         init_vertex(a);
         init_vertex(b);
+        if (a == b)
+            return;
 
         auto r1 = find_root(a);
         auto r2 = find_root(b);
@@ -33,6 +37,7 @@ struct union_find {
             parents[r1] = r2;
             sizes[r2] += sizes[r1];
         }
+        --components;
     }
 
     bool connected(T u, T v) {
