@@ -10,6 +10,7 @@ Table of contents
 * [Trie](https://github.com/Quinny/qdw-acm/blob/master/trie/trie.h)
 * [Union Find](https://github.com/Quinny/qdw-acm/blob/master/union-find/union_find.h)
 * [Median Set](https://github.com/Quinny/qdw-acm/blob/master/median/median_set.hpp)
+* [Big Integer](https://github.com/Quinny/qdw-acm/blob/master/big-int/BigInteger.hpp)
 
 # Algorithms
 
