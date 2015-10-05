@@ -9,6 +9,8 @@ Table of contents
 * [Weighted Graph](https://github.com/Quinny/qdw-acm/blob/master/graphs/weighted_graph.h)
 * [Trie](https://github.com/Quinny/qdw-acm/blob/master/trie/trie.h)
 * [Union Find](https://github.com/Quinny/qdw-acm/blob/master/union-find/union_find.h)
+    * [Maximum Component Size](https://github.com/Quinny/qdw-acm/blob/master/problems/quinn/uva/10608.cpp)
+    * [Number of Components](https://github.com/Quinny/qdw-acm/blob/master/problems/quinn/uva/459.cpp)
 * [Median Set](https://github.com/Quinny/qdw-acm/blob/master/median/median_set.hpp)
 * [Big Integer](https://github.com/Quinny/qdw-acm/blob/master/big-int/BigInteger.hpp)
 
@@ -17,6 +19,10 @@ Table of contents
 Graph Algorithms
 -------------------
 * [Breadth First Search](https://github.com/Quinny/qdw-acm/blob/master/graphs/bfs.cpp)
+    * [Degrees of Separation](https://github.com/Quinny/qdw-acm/blob/master/problems/quinn/uva/10044.cpp)
+    * [Detecting Euler Cycle](https://github.com/Quinny/qdw-acm/blob/master/problems/quinn/uva/10596.cpp)
+    * [3D Maze Traversal](https://github.com/Quinny/qdw-acm/blob/master/problems/quinn/uva/532.cpp)
+    * [2D Maze Traversal](https://github.com/Quinny/qdw-acm/blob/master/problems/quinn/uva/657.cpp)
 * [Flood Fill](https://github.com/Quinny/qdw-acm/blob/master/graphs/floodfill.cpp)
 * [Topological Sort](https://github.com/Quinny/qdw-acm/blob/master/graphs/toposort.cpp)
 
