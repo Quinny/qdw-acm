@@ -8,7 +8,7 @@ struct segment_node {
     std::size_t to, from;
     T data;
 
-    segment_node(std::size_t t, std::size_t f, T d = 0): to(t), from(f),
+    segment_node(std::size_t f, std::size_t t, T d = 0): to(t), from(f),
     left(nullptr), right(nullptr), data(d) {};
 };
 
