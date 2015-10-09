@@ -21,9 +21,12 @@ struct weighted_graph {
     >;
 
     std::map<T, std::vector<edge>> g_;
+    std::set<T> vertices;
 
     void connect(const T& u, const T& v, std::size_t w = 0) {
         g_[u].push_back({v, w});
+        vertices.insert(u);
+        vertices.insert(v);
     }
 
     void disconnect(const T& u, const T& v) {
