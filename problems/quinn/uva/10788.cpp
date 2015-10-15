@@ -19,6 +19,18 @@ std::string substring(std::string s, std::size_t start, std::size_t end) {
     return ret;
 }
 
+bool expception_palindrome(std::string s) {
+    int c = 0;
+    for (std::size_t i = 0; i < s.size(); ++i) {
+        if (s[i] == s[i + 1]) {
+            ++c;
+            ++i;
+        }
+        if (c == 2) return true;
+    }
+    return false;
+}
+
 bool is_palindrome(std::string s) {
     if (s.size() % 2 != 0)
         return false;
@@ -46,6 +58,10 @@ int num_solutions(std::string s) {
 
     int ret = is_palindrome(s);
     std::size_t i = 0, j = s.size() - 1;
+
+    if (ret && expception_palindrome(s)) {
+        return 2;
+    }
 
     if (!ret) {
         while (s[i] == s[j] && i < j) {
