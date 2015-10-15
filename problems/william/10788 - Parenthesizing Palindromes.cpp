@@ -1,15 +1,40 @@
 #include <iostream>
 #include <string>
-#include <map>
 
-using namespace std;
+std::string substring(std::string s, std::size_t start, std::size_t end) {
+    std::string ret = "";
+    
+    if (start > end)
+        return "";
+    
+    if (start == end) {
+        std::string x;
+        x += s[start];
+        return x;
+    }
+    
+    for (std::size_t i = start; i <= end; ++i) {
+        ret += s[i];
+    }
+    return ret;
+}
 
-map<string, int> dp;
+bool expception_palindrome(std::string s) {
+    int c = 0;
+    for (std::size_t i = 0; i < s.size(); ++i) {
+        if (s[i] == s[i + 1]) {
+            ++c;
+            ++i;
+        }
+        if (c == 2) return true;
+    }
+    return false;
+}
 
 bool is_palindrome(std::string s) {
     if (s.size() % 2 != 0)
         return false;
-
+    
     std::size_t i = 0, j = s.size() - 1;
     while (i < j) {
         if (s[i] != s[j]) return false;
@@ -18,63 +43,76 @@ bool is_palindrome(std::string s) {
     return true;
 }
 
-int is_valid(const string& s) {
-    if (s.size() == 0) 
+int num_solutions(std::string s) {
+    if (s.size() == 0)
         return 1;
-    else if (s.size() % 2 == 1)
+    if (s.size() % 2 != 0)
         return 0;
     
-    int solution_count = 0;    
-    if (is_palindrome(s)) {
-        solution_count++;
-        if (s.substr(1, s.size() -2).size() != 0) {
-            int result;
-            if (dp.find(s.substr(1, s.size() - 2)) != dp.end())
-                result = dp[s.substr(1, s.size() - 2)];
-            else {
-                result = solution_count+= is_valid(s.substr(1, s.size() - 2));
-                dp[s.substr(1, s.size() - 2)] = result;
-            }
+    int ret = is_palindrome(s);
+    std::size_t i = 0, j = s.size() - 1;
+    
+    if (ret && expception_palindrome(s)) {
+        return 2;
+    }
+    
+    if (!ret) {
+        while (s[i] == s[j] && i < j) {
+            ++i; --j;
+            ret += num_solutions(substring(s, i, j));
+            if (ret > 1)
+                return ret;
         }
     }
-
-    for (int i = 0; i < s.size(); ++i) {
-        for (int j = i + 1; j < s.size(); ++j) { 
-            int first, second;
-            if (dp.find(s.substr(i, j - i)) != dp.end())
-                first = dp[s.substr(i, j - i)];
-            else {
-                first = is_valid(s.substr(i, j - i));
-                dp[s.substr(i, j - i)] = first;
-            }
-
-            if (dp.find(s.substr(j, s.size())) != dp.end())
-                second = dp[s.substr(j, s.size())];
-            else {
-                second = is_valid(s.substr(j, s.size()));
-                dp[s.substr(j, s.size())] = second;
-            }
-            solution_count+= first * second; // multiple of each side. 0 if any side has no solution
+    
+    std::string tmp = "";
+    for (std::size_t idx = 0; idx != s.size(); ++idx) {
+        tmp += s[idx];
+        if (is_palindrome(tmp) && tmp != s) {
+            ret += num_solutions(substring(s, idx+1, s.size() - 1));
+            if (ret > 1)
+                return ret;
         }
     }
-    return solution_count;
+    
+    
+    for (std::size_t idx = 1; idx != s.size() - 1; ++idx) {
+        if (s[0] == s[idx]) {
+            if (is_palindrome(substring(s, 0, idx)))
+                continue;
+            int one = num_solutions(substring(s, 1, idx - 1));
+            int two = num_solutions(substring(s, idx + 1, s.size() - 1));
+            if (one >= 1 && two >= 1) {
+                ++ret;
+                if (one >= 2 || two >= 2)
+                    ++ret;
+            }
+            if (ret > 1)
+                return ret;
+        }
+    }
+    return ret;
 }
 
 int main() {
-    int cases;
-    cin >> cases;
-    for (int i = 0; i < cases; ++i) {
-        string s;
-        cin >> s;
-        cout << "Case " << i + 1 << ": ";
-        int count = is_valid(s);
-        if (count > 1)
-            cout << "Valid, Multiple" << endl;
-        else if (count == 1)
-            cout << "Valid, Unique" << endl;
-        else 
-            cout << "Invalid" << endl;
+    int n;
+    std::cin >> n;
+    
+    int solns;
+    for (int i = 0; i != n; ++i) {
+        std::string s;
+        std::cin >> s;
+        solns = num_solutions(s);
+        
+        std::cout << "Case " << (i + 1) << ": ";
+        
+        if (solns > 1) {
+            std::cout << "Valid, Multiple" << std::endl;
+        } else if (solns == 1) {
+            std::cout << "Valid, Unique" << std::endl;
+        } else {
+            std::cout << "Invalid" << std::endl;
+        }
     }
-    return 0;    
+    return 0;
 }
-
