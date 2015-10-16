@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 std::string substring(std::string s, std::size_t start, std::size_t end) {
     std::string ret = "";
@@ -59,7 +60,7 @@ int num_solutions(std::string s) {
     if (!ret) {
         while (s[i] == s[j] && i < j) {
             ++i; --j;
-            ret += num_solutions(substring(s, i, j));
+            ret = std::max(ret, num_solutions(substring(s, i, j)));
             if (ret > 1)
                 return ret;
         }
@@ -80,8 +81,8 @@ int num_solutions(std::string s) {
         if (s[0] == s[idx]) {
             if (is_palindrome(substring(s, 0, idx)))
                 continue;
-            int one = num_solutions(substring(s, 1, idx - 1));
-            int two = num_solutions(substring(s, idx + 1, s.size() - 1));
+            auto one = num_solutions(substring(s, 1, idx - 1));
+            auto two = num_solutions(substring(s, idx + 1, s.size() - 1));
             if (one >= 1 && two >= 1) {
                 ++ret;
                 if (one >= 2 || two >= 2)
@@ -105,7 +106,6 @@ int main() {
         solns = num_solutions(s);
         
         std::cout << "Case " << (i + 1) << ": ";
-        
         if (solns > 1) {
             std::cout << "Valid, Multiple" << std::endl;
         } else if (solns == 1) {
@@ -116,3 +116,4 @@ int main() {
     }
     return 0;
 }
+
