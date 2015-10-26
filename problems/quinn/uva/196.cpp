@@ -3,28 +3,32 @@
 #include <set>
 #include <queue>
 #include <iostream>
+#include <algorithm>
+
+#include <cassert>
 
 template <typename T>
 struct directed_graph {
-    std::map<T, std::set<T>> g_;
+    std::map<T, std::vector<T>> g_;
     std::map<T, std::size_t> incoming_count_;
 
     void connect(const T& u, const T& v) {
         incoming_count_.insert({u, 0});
-        g_[u].insert(v);
+        g_[u].push_back(v);
         ++incoming_count_[v];
     }
 
     void add(const T& u) {
         incoming_count_.insert({u, 0});
+        g_.insert({u, std::vector<T>()});
     }
 
     void disconnect(const T& u, const T& v) {
-        g_[u].erase(v);
+        g_[u].erase(std::find(g_[u].begin(), g_[u].end(), v));
         --incoming_count_[v];
     }
 
-    std::set<T> operator[] (const T& u) {
+    std::vector<T> operator[] (const T& u) {
         return g_[u];
     }
 };
@@ -47,7 +51,7 @@ bool is_upper(char c) {
 }
 
 bool is_digit(char c) {
-    return c >= '1' && c <= '9';
+    return c >= '0' && c <= '9';
 }
 
 int to_base(std::string s, int base, char offset = '0') {
@@ -71,6 +75,7 @@ std::vector<point> parse_deps(std::string s) {
         }
         int x = to_base(tmp, 26, 'A' - 1);
         tmp.clear();
+        assert(x >= 0);
 
         while (j < s.size() && is_digit(s[j])) {
             tmp += s[j];
@@ -78,6 +83,7 @@ std::vector<point> parse_deps(std::string s) {
         }
         int y = to_base(tmp, 10);
         ret.push_back({y - 1, x - 1});
+        assert(y >= 0);
 
         i = j;
     }
@@ -97,8 +103,8 @@ void compute(directed_graph<point> g, matrix<int>& sheet) {
         q.pop();
 
         for (auto i: g[t]) {
-            g.disconnect(t, i);
             sheet[i.first][i.second] += sheet[t.first][t.second];
+            g.disconnect(t, i);
             if (g.incoming_count_[i] == 0)
                 q.push(i);
         }
@@ -131,7 +137,6 @@ int main() {
                 int n;
                 if (std::cin >> n) {
                     sheet[i][j] = n;
-                    g.add({i, j});
                 }
                 else {
                     std::cin.clear();
@@ -141,6 +146,7 @@ int main() {
                     for (auto d: deps)
                         g.connect(d, {i, j});
                 }
+                g.add({i, j});
             }
         }
         compute(g, sheet);
