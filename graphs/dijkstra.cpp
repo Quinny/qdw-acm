@@ -18,6 +18,7 @@ std::unordered_map<T, T> dijkstra(weighted_graph<T> g, T source) {
         std::vector<std::pair<T, int>>,
         compare<T>
     > q;
+
     std::unordered_map<T, std::size_t> dist;
     std::unordered_map<T, T> prev;
 
@@ -26,7 +27,7 @@ std::unordered_map<T, T> dijkstra(weighted_graph<T> g, T source) {
 
     for (T v : g.vertices) {
         if (v != source)
-            dist.insert({v, 1000});
+            dist.insert({v, ~0});
     }
 
     while (!q.empty()) {

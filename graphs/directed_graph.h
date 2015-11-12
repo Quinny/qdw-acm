@@ -22,6 +22,10 @@ struct directed_graph {
         ++incoming_count_[v];
     }
 
+    void insert(const T& u) {
+        incoming_count_.insert({u, 0});
+    }
+
     void disconnect(const T& u, const T& v) {
         g_[u].erase(v);
         --incoming_count_[v];
