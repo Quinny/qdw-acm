@@ -4,41 +4,24 @@
 
 using namespace std;
 
-int east_neg_offset(int v, int t, int ti) {
-    int pos = ti * v;
-    int times = -1 * pos / (t * v);
-    if (pos % (t * v) == 0)
+int east_start(int v, int t, int ti) {
+    if (ti % t == 0)
         return 0;
-    else
-        return pos + (times * (t * v)) + (t * v);
+    if (ti < 0) {
+        ti *= -1;
+        return (v * t) - (v * (ti % t));
+    }
+    return v * (ti % t);
 }
 
-int east_pos_offset(int v, int t, int ti) {
-    int pos = ti * v;
-    int times = pos / (t * v);
-    if (pos % (t * v) == 0)
-        return 0;
-    else
-        return pos - (times * (t * v));
-}
-
-int west_neg_offset(int v, int t, int ti, int total_distance) {
-    int pos = ti * v;
-    int times = -1 * pos / (t * v);
-    if (pos % (t * v) == 0)
-        return total_distance;
-    else
-        return pos + (times * (t * v)) + total_distance;
-}
-
-int west_pos_offset(int v, int t, int ti, int total_distance) {
-    int pos = total_distance + (ti * v);
-    int times = pos / (t * v);
-    if (pos % (t % v) == 0)
-        return total_distance;
-    else
-        return pos - (times * (t * v));
-    
+int west_start(int v, int t, int ti, int td) {
+    if (ti % t == 0)
+        return td;
+    if (ti < 0) {
+        ti *= 1;
+        return td - ((v * t) - (v * (ti % t)));
+    }
+    return td - (v * (ti % t));
 }
 
 int main() {
@@ -52,22 +35,20 @@ int main() {
         int addWest = 0;
         int meet = 0;
         int preMeet = 0;
-        
-        int east_start = 0, west_start = total_distance;
-        if (ti < 0) {
-            east_start = east_neg_offset(v1, t1, ti);
-            west_start = west_neg_offset(v2, t2, ti, total_distance);
-        } else if (ti > 0) {
-            east_start = east_pos_offset(v1, t1, ti);
-            west_start = west_neg_offset(v2, t2, ti, total_distance);
-        }
-        
+
+        current_time = 0;
+        int limit = t1 * t2;
+
+        // These are needed to shift the start positions by an offset of ti
+        int e_start = east_start(v1, t1, ti);
+        int w_start = west_start(v2, t2, ti, total_distance);
+
         // Populate with already existing cars
-        for (int i = 0; i <= (d1 + d); i+=(t1 * v1))
+        for (int i = e_start; i <= (d1 + d); i += (t1 * v1))
             east_cars.push_back(i);
-        for (int i = total_distance; i>= d1; i-=(t2 * v2))
+        for (int i = w_start; i >= d1; i -= (t2 * v2))
             west_cars.push_back(i);
-        
+
         // Check for cars currently overlapping
         for (auto east : east_cars) {
             for (auto west : west_cars) {
@@ -75,8 +56,9 @@ int main() {
                     preMeet++;
             }
         }
+
         // Simulation Loop :)
-        while (current_time < tf) {
+        while (current_time < limit) {
             // Determines when to add new cars
             if (addEast == t1) {
                 east_cars.push_back(0);
@@ -84,22 +66,22 @@ int main() {
             }
             else
                 addEast++;
-            
+
             if (addWest == t2) {
                 west_cars.push_back(total_distance);
                 addWest = 1;
             }
             else
                 addWest++;
-            
+
             // Remove unnecessary Westbound cars
-            for (auto i = 0; i < west_cars.size(); ++i) {
+            for (auto i = 0U; i < west_cars.size(); ++i) {
                 if (west_cars[i] <= d1)
                     west_cars.erase(west_cars.begin() + i);
             }
-            
+
             // Remove unecessary east bound cars and calculate which west bound ones we will meet
-            for (auto i = 0; i < east_cars.size(); ++i) {
+            for (auto i = 0U; i < east_cars.size(); ++i) {
                 if (east_cars[i] >= (d1 + d)) {
                     east_cars.erase(east_cars.begin() + i);
                 }
@@ -116,13 +98,15 @@ int main() {
                     east_cars[i] += v1;
                 }
             }
-            
-            for (auto i = 0; i < west_cars.size(); ++i) {
+
+            for (auto i = 0U; i < west_cars.size(); ++i) {
                 west_cars[i] -= v2;
             }
             current_time++;
         }
-        
+
+        int range = tf - ti;
         cout << meet + preMeet <<  endl;
+        cout << ((range / limit) * meet) << endl;
     }
 }
