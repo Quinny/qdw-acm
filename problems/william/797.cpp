@@ -38,7 +38,7 @@ int west_pos_offset(int v, int t, int ti, int total_distance) {
         return total_distance;
     else
         return pos - (times * (t * v));
-
+    
 }
 
 int main() {
@@ -48,9 +48,11 @@ int main() {
         int total_distance = d1 + d2 + d;
         vector<int> east_cars;
         vector<int> west_cars;
+        int addEast = 0;
+        int addWest = 0;
         int meet = 0;
         int preMeet = 0;
-
+        
         int east_start = 0, west_start = total_distance;
         if (ti < 0) {
             east_start = east_neg_offset(v1, t1, ti);
@@ -59,13 +61,13 @@ int main() {
             east_start = east_pos_offset(v1, t1, ti);
             west_start = west_neg_offset(v2, t2, ti, total_distance);
         }
-
+        
         // Populate with already existing cars
-        for (int i = east_start; i < d1 + d; i += t1 * v1)
+        for (int i = 0; i <= (d1 + d); i+=(t1 * v1))
             east_cars.push_back(i);
-        for (int i = west_start; i > d1; i -= t2 * v2)
+        for (int i = total_distance; i>= d1; i-=(t2 * v2))
             west_cars.push_back(i);
-
+        
         // Check for cars currently overlapping
         for (auto east : east_cars) {
             for (auto west : west_cars) {
@@ -73,43 +75,54 @@ int main() {
                     preMeet++;
             }
         }
-
         // Simulation Loop :)
-        while (current_time < ti + 1) {
+        while (current_time < tf) {
+            // Determines when to add new cars
+            if (addEast == t1) {
+                east_cars.push_back(0);
+                addEast = 1;
+            }
+            else
+                addEast++;
+            
+            if (addWest == t2) {
+                west_cars.push_back(total_distance);
+                addWest = 1;
+            }
+            else
+                addWest++;
+            
             // Remove unnecessary Westbound cars
-            for (auto i = 0U; i < west_cars.size(); ++i) {
-                if (west_cars[i] < d1)
+            for (auto i = 0; i < west_cars.size(); ++i) {
+                if (west_cars[i] <= d1)
                     west_cars.erase(west_cars.begin() + i);
             }
-
+            
             // Remove unecessary east bound cars and calculate which west bound ones we will meet
-            for (auto i = 0U; i < east_cars.size(); ++i) {
-                if (east_cars[i] > (d1 + d)) {
+            for (auto i = 0; i < east_cars.size(); ++i) {
+                if (east_cars[i] >= (d1 + d)) {
                     east_cars.erase(east_cars.begin() + i);
-                } else {
+                }
+                else {
                     // calculating west bound cars I will pass WITHIN the tunnel
                     for (auto west : west_cars) {
                         if (west > east_cars[i] && west <= (east_cars[i] + v1 + v2)) {
                             float travel_time = float((west - east_cars[i]))/float((v1 + v2)); // time to meet
                             float meet_position = (travel_time * v1) + east_cars[i]; // position of meeting
-                            if (meet_position  > d1 && meet_position < (d1 + d))
+                            if (meet_position > d1 && meet_position < (d1 + d))
                                 meet++;
                         }
                     }
                     east_cars[i] += v1;
                 }
             }
-
-            for (auto i = 0U; i < west_cars.size(); ++i) {
+            
+            for (auto i = 0; i < west_cars.size(); ++i) {
                 west_cars[i] -= v2;
             }
-
             current_time++;
         }
-
-        cout << (meet * abs(tf - ti)) + preMeet << endl;
-        cout << meet + preMeet << std::endl;
-        //cout << preMeet << endl;
+        
+        cout << meet + preMeet <<  endl;
     }
 }
-
