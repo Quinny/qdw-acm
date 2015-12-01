@@ -7,6 +7,24 @@ using namespace std;
 int d, d1, d2, v1, v2, t1, t2, ti, tf;
 int total_distance;
 
+/*
+int east_start(int v, int t, int ti) {
+    int pos = ti * v;
+    while (pos > 0) {
+        pos -= v * t;
+    }
+    return pos + (v * t);
+}
+
+int west_start(int v, int t, int ti, int td) {
+    int pos = td - (ti * v);
+    while (pos < td) {
+        pos += v * t;
+    }
+    return pos - (v * t);
+}
+*/
+
 int east_start(int v, int t, int ti) {
     if (ti % t == 0)
         return 0;
@@ -65,8 +83,9 @@ int simulate(int start, int end, vector<int>& east_cars, vector<int>& west_cars)
                 // calculating west bound cars I will pass WITHIN the tunnel
                 for (auto west : west_cars) {
                     if (west > east_cars[i] && west <= (east_cars[i] + v1 + v2)) {
-                        float travel_time = float((west - east_cars[i]))/float((v1 + v2)); // time to meet
-                        float meet_position = (travel_time * v1) + east_cars[i]; // position of meeting
+                        double travel_time = double((west - east_cars[i])) / double((v1 + v2)); // time to meet
+                        double meet_position = (travel_time * v1) + east_cars[i]; // position of meeting
+                        // cout << current_time << " " << meet_position << " " << d1 << " " <<  d1 + d << endl;
                         if (meet_position > d1 && meet_position < (d1 + d))
                             meet++;
                     }
@@ -127,3 +146,4 @@ int main() {
         }
     }
 }
+
