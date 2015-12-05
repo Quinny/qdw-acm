@@ -61,6 +61,7 @@ std::size_t max_flow(matrix<int> graph, int source, int target) {
 }
 
 int main() {
+   // vertex u is connected to v with capacity m[u][v]
     matrix<int> g = { {0, 16, 13, 0, 0, 0},
         {0, 0, 10, 12, 0, 0},
         {0, 4, 0, 0, 14, 0},
