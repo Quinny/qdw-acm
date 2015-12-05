@@ -2,6 +2,10 @@
 #include <vector>
 #include <algorithm>
 
+// I worked with william roeder and david valleau
+// to produce this solution
+
+
 using namespace std;
 
 int d, d1, d2, v1, v2, t1, t2, ti, tf;

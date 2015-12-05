@@ -3,3 +3,6 @@
 a.out*
 .DS_Store
 input
+*.test
+*.answer
+*.pdf
